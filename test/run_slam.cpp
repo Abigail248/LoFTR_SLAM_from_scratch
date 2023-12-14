@@ -8,6 +8,7 @@
   ******************************************************************************
 **/
 #include<iostream>
+#include <fstream>
 #include<algorithm>
 #include<chrono>
 #include <thread>
@@ -19,7 +20,6 @@
 #include <Eigen/Core>
 
 #include<System.h>
-#include<Config.h>
 
 using namespace std;
 
@@ -31,9 +31,9 @@ void showTcw(const int index, const double timestamp, const Sophus::SE3f &Tcw);
 int main(int argc, char** argv)
 {
 
-    if (argc < 6)
+    if (argc < 5)
     {
-        cerr << endl << "Usage: ./Mono images_dir_path image_time_path voc_path LoFTR_model_path (mask_image_path) setting_path" << endl;
+        cerr << endl << "Usage: ./Mono images_dir_path image_time_path LoFTR_model_path (mask_image_path) setting_path" << endl;
         return 1;
     }
 
@@ -44,10 +44,9 @@ int main(int argc, char** argv)
     string strSettingPath = string (argv[argc-1]);
     string strImagePath = string (argv[1]);
     string strPathTimes = string (argv[2]);
-    string strVocPath   = string (argv[3]);
-    string strLoFTRModelPath = string(argv[4]);
+    string strLoFTRModelPath = string(argv[3]);
     string strMaskImagePath = string ();
-    if (argc == 7)
+    if (argc == 6)
     {
         strMaskImagePath = argv[argc-2];
     }
@@ -66,13 +65,12 @@ int main(int argc, char** argv)
     nImages = static_cast<int>(vstrImages.size());
 
 
-    ORB_SLAM3::System SLAM (strVocPath, strMaskImagePath, strSettingPath, strLoFTRModelPath, ORB_SLAM3::System::MONOCULAR, false);
+    LoFTR_SLAM::System SLAM (strMaskImagePath, strSettingPath, strLoFTRModelPath, LoFTR_SLAM::System::MONOCULAR, false);
 
 
     float imageScale = SLAM.GetImageScale();
 
     cv::Mat im;
-    vector<ORB_SLAM3::EM::Point> vEmMeas;
 
     for ( int ni=0 ; ni<nImages; ni++ )
     {
